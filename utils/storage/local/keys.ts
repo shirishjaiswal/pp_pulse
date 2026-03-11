@@ -3,9 +3,10 @@
 
 export const LocalStorageKeys = {
   KEY_JSESSIONID: "KEY_JSESSIONID",
-  KEY_KIBANA_OAUTH_1: "KEY_KIBANA_OAUTH_1",
-  KEY_KIBANA_OAUTH_2: "KEY_KIBANA_OAUTH_2",
-  SID: "SID",
+  _oauth2_proxy_0: "_oauth2_proxy_0",
+  _oauth2_proxy_1: "_oauth2_proxy_1",
+  sid: "sid",
+  CASINO_ADMIN_TOKEN: "CASINO_ADMIN_TOKEN"
 } as const;
 
 export type LocalStorageKeysType = keyof typeof LocalStorageKeys;

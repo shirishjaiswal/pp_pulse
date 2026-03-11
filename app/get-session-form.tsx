@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { setSessionData } from "@/utils/storage/local/session-operations";
+import { useRouter } from "next/navigation";
 
 // 1. Zod Schema for validation
 const sessionSchema = z.object({
@@ -34,7 +35,7 @@ export default function GetSessionForm() {
     oAuthCookie2: "",
     sid: "",
   });
-
+  const router = useRouter();
   const [isSaved, setIsSaved] = useState(false);
 
   // 3. Load from Local Storage on mount
@@ -69,10 +70,11 @@ export default function GetSessionForm() {
       formData.jsessionId,
       formData.oAuthCookie1,
       formData.oAuthCookie2,
-      formData.sid
+      formData.sid,
     );
     setIsSaved(true);
     toast.success("Session data stored locally");
+    router.push("/casino-details");
   };
 
   const handleClear = () => {

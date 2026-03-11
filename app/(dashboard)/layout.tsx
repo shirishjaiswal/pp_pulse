@@ -1,26 +1,40 @@
-import { AppSidebar } from "@/components/custom/app-side-bar";
+"use client";
+
+import { usePathname } from "next/navigation";
+import { AppSidebar, sideBarMenu } from "@/components/custom/app-side-bar";
 import SessionValidation from "@/components/custom/session-validation";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
+  const currentRoute = sideBarMenu.find((item) => item.url === pathname);
+  const currentTitle = currentRoute ? currentRoute.title : "Dashboard";
+  
   return (
-    <>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-            <SidebarTrigger className="-ml-1" />
-            <h1 className="text-sm font-medium">Dashboard</h1>
-          </header>
-          <main className="flex flex-1 flex-col gap-4 p-4">
+    <SidebarProvider style={{
+      "--sidebar-width": "12rem",
+      "--sidebar-width-icon": "2rem"
+    } as React.CSSProperties}>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b px-4">
+          <SidebarTrigger className="-ml-1" />
+          <h1 className="transition-all text-2xl font-bold">
+            {currentTitle}
+          </h1>
+        </header>
+        <ScrollArea className="h-[calc(100vh-4rem)] w-full">
+          <div className="p-4">
             <SessionValidation>{children}</SessionValidation>
-          </main>
-        </SidebarInset>
-      </SidebarProvider>
-    </>
+          </div>
+        </ScrollArea>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

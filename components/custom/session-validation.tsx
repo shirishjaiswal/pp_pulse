@@ -15,22 +15,35 @@ export default function SessionValidation({
 
   useEffect(() => {
     const hasSession = isSessionDataPresent();
+    const isRootRoute = pathname === "/";
 
-    // 1. Define "Public" routes that don't need a session (like Login or Home)
-    const isPublicRoute = pathname === "/" || pathname === "/login";
+    // Scenario A: No session and trying to access protected routes
+    if (!hasSession && !isRootRoute) {
+      router.push("/"); 
+      // Note: Usually, if no session exists, you'd send them back to the form (/)
+    } 
+    
+    // Scenario B: Session exists and user is sitting on the login/form page (/)
+    else if (hasSession && isRootRoute) {
+      router.push("/casino-details");
+    } 
 
-    if (!hasSession && !isPublicRoute) {
-      // 2. Redirect to home if session is missing and route is private
-      router.push("/");
-    } else {
-      // 3. Allow rendering
-      setTimeout(() => setIsChecking(false), 500);
+    // Scenario C: Everything is fine, stop the loading state
+    else {
+      // Small timeout to prevent flicker during fast transitions
+      const timer = setTimeout(() => setIsChecking(false), 500);
+      return () => clearTimeout(timer);
     }
   }, [pathname, router]);
 
-  // Prevent "flicker" of private content while checking localStorage
-  if (isChecking && pathname !== "/") {
-    return null; // Or a loading spinner
+  // Prevent rendering children while redirecting or checking
+  // This avoids a "flash" of the form if the user is already logged in
+  if (isChecking) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <p className="text-sm text-muted-foreground animate-pulse">Verifying session...</p>
+      </div>
+    );
   }
 
   return <>{children}</>;

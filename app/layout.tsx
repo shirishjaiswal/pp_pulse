@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/lib/providers/query-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import SessionValidation from "@/components/custom/session-validation";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -32,7 +33,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <TooltipProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <SessionValidation>{children}</SessionValidation></QueryProvider>
         </TooltipProvider>
       </body>
     </html>

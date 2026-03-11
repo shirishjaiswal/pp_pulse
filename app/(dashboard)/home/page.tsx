@@ -1,4 +1,5 @@
+import Test from "./test";
 
 export default function Page() {
-  return <div>Home</div>;
+  return <Test />;
 }

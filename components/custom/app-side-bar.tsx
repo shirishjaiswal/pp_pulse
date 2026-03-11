@@ -2,12 +2,12 @@
 
 import {
   Calendar,
-  Home,
+  DicesIcon,
   Inbox,
   Search,
   Settings,
-  Settings2Icon,
   SettingsIcon,
+  UserSearch,
 } from "lucide-react";
 import {
   Sidebar,
@@ -20,34 +20,33 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar, // 1. Import the hook
+  useSidebar,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
+import Image from "next/image";
 
-const sideBarMenu = [
-  { title: "Home", url: "/home", icon: Home },
-  { title: "Inbox", url: "#", icon: Inbox },
-  { title: "Calendar", url: "#", icon: Calendar },
-  { title: "Search", url: "#", icon: Search },
-  { title: "Settings", url: "#", icon: Settings },
+// Single source of truth for navigation
+export const sideBarMenu = [
+  { title: "Casino Details", url: "/casino-details", icon: Inbox },
+  { title: "Round Details", url: "/round-details", icon: DicesIcon },
+  { title: "Player Info", url: "/player-info", icon: UserSearch },
 ];
 
 const sideBarFooter = [{ title: "Session", url: "/session", icon: SettingsIcon }];
 
 export function AppSidebar() {
-  // 2. Extract the state from the hook
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
   return (
     <Sidebar variant="inset" collapsible="icon">
       <SidebarHeader>
-        <div className="flex items-center gap-2 px-4 py-2 font-bold">
-          {/* Always show the "image" (the colored box) */}
-          <div className="bg-primary h-6 w-6 shrink-0 rounded-md" />
-
-          {/* 3. Only show text if not collapsed */}
+        <div className="flex items-center gap-2 font-bold">
           {!isCollapsed && (
-            <span className="truncate transition-all">PP Pulse</span>
+            <>
+              <Image src="/logo.png" alt="logo" width={36} height={36} />
+              <span className="truncate transition-all">PP Pulse</span>
+            </>
           )}
         </div>
       </SidebarHeader>
@@ -60,10 +59,10 @@ export function AppSidebar() {
               {sideBarMenu.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild tooltip={item.title}>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -71,17 +70,20 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+
       <SidebarFooter>
-        {sideBarFooter.map((item) => (
-          <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild tooltip={item.title}>
-              <a href={item.url}>
-                <item.icon />
-                <span>{item.title}</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        ))}
+        <SidebarMenu>
+          {sideBarFooter.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild tooltip={item.title}>
+                <Link href={item.url}>
+                  <item.icon />
+                  <span>{item.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );

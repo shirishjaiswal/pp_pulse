@@ -5,9 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { 
-  Pencil, Save, X, Copy, Eye, EyeOff, 
-  Terminal, ShieldCheck, RefreshCcw 
+import {
+  Pencil, Save, X, Copy, Eye, EyeOff,
+  Terminal, ShieldCheck, RefreshCcw
 } from "lucide-react";
 import { getSessionData } from "@/utils/storage/local/session-operations";
 import { setLocal } from "@/utils/storage/local/crud";
@@ -31,9 +31,9 @@ export default function SessionData() {
   const handleSave = () => {
     if (!editForm) return;
     setLocal(LocalStorageKeys.KEY_JSESSIONID, editForm.jsessionId);
-    setLocal(LocalStorageKeys.KEY_KIBANA_OAUTH_1, editForm.oAuthCookie1);
-    setLocal(LocalStorageKeys.KEY_KIBANA_OAUTH_2, editForm.oAuthCookie2);
-    setLocal(LocalStorageKeys.SID, editForm.sid);
+    setLocal(LocalStorageKeys._oauth2_proxy_0, editForm.oAuthCookie1);
+    setLocal(LocalStorageKeys._oauth2_proxy_1, editForm.oAuthCookie2);
+    setLocal(LocalStorageKeys.sid, editForm.sid);
 
     setData(editForm);
     setIsEditing(false);
@@ -49,6 +49,20 @@ export default function SessionData() {
     { id: "sid", label: "System ID (SID)", value: data.sid },
   ];
 
+  const combinedCookie = [
+    { key: "_oauth2_proxy_0", value: data.oAuthCookie1 },
+    { key: "_oauth2_proxy_1", value: data.oAuthCookie2 },
+    { key: "sid", value: data.sid }
+  ]
+    .filter(item => item.value) // Only include keys that have values
+    .map(item => `${item.key}=${item.value}`)
+    .join(";");
+
+  // 2. Add a helper to copy the whole string
+  const copyAllCookies = () => {
+    handleCopy(combinedCookie);
+    toast.success("Full cookie string copied");
+  };
   return (
     <div className="max-w-4xl mx-auto py-10 px-6 antialiased">
       {/* Header Section */}
@@ -93,6 +107,26 @@ export default function SessionData() {
         </div>
       </div>
 
+      {!isEditing && (
+        <div className="mb-4 p-4 bg-slate-900 rounded-lg border border-slate-800 shadow-inner">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+              Combined Proxy & SID Cookie
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={copyAllCookies}
+              className="h-7 text-xs text-blue-400 hover:text-blue-300 hover:bg-slate-800"
+            >
+              <Copy className="w-3 h-3 mr-2" /> Copy Full String
+            </Button>
+          </div>
+          <code className="text-[12px] font-mono text-emerald-400 break-all block leading-relaxed">
+            {showSecrets ? combinedCookie : "********************************************************"}
+          </code>
+        </div>
+      )}
       {/* Main Data Table Area */}
       <div className="rounded-lg border border-slate-200 bg-white shadow-sm overflow-hidden">
         <div className="bg-slate-50/50 border-b border-slate-200 px-6 py-3 grid grid-cols-12 gap-4">
@@ -120,8 +154,8 @@ export default function SessionData() {
                 ) : (
                   <>
                     <div className="flex-1 font-mono text-[13px] text-slate-600 truncate bg-slate-100/50 px-3 py-1.5 rounded border border-slate-200/60 group relative">
-                      {showSecrets 
-                        ? (field.value || "—") 
+                      {showSecrets
+                        ? (field.value || "—")
                         : (field.value ? "••••••••••••••••••••••••" : "—")
                       }
                     </div>
@@ -141,7 +175,8 @@ export default function SessionData() {
             </div>
           ))}
         </div>
-
+        <div>
+        </div>
         {isEditing && (
           <div className="bg-slate-50 border-t border-slate-200 px-6 py-4 flex justify-end items-center gap-4">
             <span className="text-xs text-slate-500 flex items-center gap-2">

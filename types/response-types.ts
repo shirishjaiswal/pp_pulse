@@ -15,6 +15,7 @@ export interface Connection {
 
 export type RequestOptions = {
   connection: Connection;
+  cookie: string
 };
 
 export interface Response<T = unknown> {
